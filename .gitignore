@@ -6,8 +6,40 @@
 *.swp
 .buildlog/
 .history
+.DS_Store
+.atom/
+.svn/
+.swiftpm/
+migrate_working_dir/
 
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
 
+# VS Code (optional)
+#.vscode/
+
+# Flutter/Dart/Pub
+**/doc/api/
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+**/generated_plugin_registrant.dart
+.packages
+.packages.generated
+.pub/
+.pub-cache/
+.pub-preload-cache/
+/build/
+/coverage/
+analysis_benchmark.json
+version
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
 
 # Flutter repo-specific
 /bin/cache/
@@ -25,28 +57,8 @@
 /dev/integration_tests/**/xcuserdata
 /dev/integration_tests/**/Pods
 /packages/flutter/coverage/
-version
-analysis_benchmark.json
 
-# packages file containing multi-root paths
-.packages.generated
-
-# Flutter/Dart/Pub related
-**/doc/api/
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-**/generated_plugin_registrant.dart
-.packages
-.pub-preload-cache/
-.pub/
-build/
-flutter_*.png
-linked_*.ds
-unlinked.ds
-unlinked_spec.ds
-
-# Android related
+# Android
 **/android/**/gradle-wrapper.jar
 .gradle/
 **/android/captures/
@@ -56,8 +68,11 @@ unlinked_spec.ds
 **/android/**/GeneratedPluginRegistrant.java
 **/android/key.properties
 *.jks
+/android/app/debug
+/android/app/profile
+/android/app/release
 
-# iOS/XCode related
+# iOS
 **/ios/**/*.mode1v3
 **/ios/**/*.mode2v3
 **/ios/**/*.moved-aside
@@ -104,13 +119,12 @@ unlinked_spec.ds
 **/linux/flutter/generated_plugin_registrant.h
 **/linux/flutter/generated_plugins.cmake
 
-# Coverage
+# Coverage & Symbols
 coverage/
-
-# Symbols
 app.*.symbols
+app.*.map.json
 
-# Exceptions to above rules.
+# Exceptions (do not ignore these)
 !**/ios/**/default.mode1v3
 !**/ios/**/default.mode2v3
 !**/ios/**/default.pbxuser
