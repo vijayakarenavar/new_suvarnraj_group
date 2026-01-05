@@ -22,7 +22,7 @@ class CartPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface.withOpacity(0.3),
       appBar: AppBar(
-        title: Text('Shopping Cart', style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+        title: Text('Shopping Cart1', style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
         backgroundColor: colorScheme.surface,
         foregroundColor: colorScheme.onSurface,
         elevation: 1,
