@@ -91,8 +91,12 @@ class CartPage extends StatelessWidget {
     if (related.isEmpty) return const SizedBox();
 
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10), // ← डाव-उजवीकडे space दिला
       padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-      color: colorScheme.background,
+      decoration: BoxDecoration(
+        color: colorScheme.background,
+        borderRadius: BorderRadius.circular(14), // ✅ Rounded corners added here
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -215,7 +219,6 @@ class CartPage extends StatelessWidget {
                 );
                 return;
               }
-
               final alreadyExists = cartCtrl.cartItems.any((item) => item['id'] == serviceId);
               if (alreadyExists) {
                 Get.snackbar(
@@ -227,7 +230,6 @@ class CartPage extends StatelessWidget {
                 );
                 return;
               }
-
               final newItem = {
                 'row_id': 'local_${DateTime.now().millisecondsSinceEpoch}',
                 'id': serviceId,
@@ -237,18 +239,14 @@ class CartPage extends StatelessWidget {
                 'image': service['image_url'] ?? service['image'] ?? '',
                 'subtotal': service['price'] ?? 0,
               };
-
               String imageUrl = newItem['image'].toString().trim();
               if (imageUrl.isEmpty) {
                 newItem['image'] = 'https://via.placeholder.com/100?text=No+Image';
               } else if (!imageUrl.startsWith('http')) {
-                // ✅ Fixed: proper string interpolation
                 newItem['image'] = 'https://portfolio2.lemmecode.in$imageUrl';
               }
-
               cartCtrl.cartItems.add(newItem);
               cartCtrl.recalculateTotals();
-
               Get.snackbar(
                 "Added!",
                 "${newItem['title']} added to cart",
@@ -304,7 +302,6 @@ class CartPage extends StatelessWidget {
 
     String? fullImageUrl = imageUrl;
     if (imageUrl != null && !imageUrl.startsWith('http')) {
-      // ✅ Fixed interpolation
       fullImageUrl = 'https://portfolio2.lemmecode.in$imageUrl';
     }
 
@@ -504,8 +501,6 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  // ——— Rest of helper widgets (no changes needed for null safety) ———
-
   Widget _buildLoginRequired(ColorScheme colorScheme) {
     return Center(
       child: Column(
@@ -683,6 +678,7 @@ class CartPage extends StatelessWidget {
 
   Widget _buildMobileCartSummary(CartController cartCtrl, ColorScheme colorScheme) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 10), // ← डाव-उजवीकडे space दिला
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
         color: colorScheme.surface,
