@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:sizer/sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/services.dart';
 
 class SupportPage extends StatefulWidget {
   const SupportPage({super.key});
@@ -165,7 +166,7 @@ class _SupportPageState extends State<SupportPage> {
               child: _buildActionCard(
                 icon: FontAwesomeIcons.phone,
                 title: 'Call Us',
-                color: Colors.green, // brand color → keep
+                color: Colors.green,
                 onTap: () => _makePhoneCall(),
               ),
             ),
@@ -174,7 +175,7 @@ class _SupportPageState extends State<SupportPage> {
               child: _buildActionCard(
                 icon: FontAwesomeIcons.whatsapp,
                 title: 'WhatsApp',
-                color: Colors.teal, // brand color → keep
+                color: Colors.teal,
                 onTap: () => _openWhatsApp(),
               ),
             ),
@@ -187,7 +188,7 @@ class _SupportPageState extends State<SupportPage> {
               child: _buildActionCard(
                 icon: FontAwesomeIcons.envelope,
                 title: 'Email Us',
-                color: Colors.blue, // brand color → keep
+                color: Colors.blue,
                 onTap: () => _sendEmail(),
               ),
             ),
@@ -196,7 +197,7 @@ class _SupportPageState extends State<SupportPage> {
               child: _buildActionCard(
                 icon: FontAwesomeIcons.locationDot,
                 title: 'Visit Us',
-                color: Colors.orange, // brand color → keep
+                color: Colors.orange,
                 onTap: () => _openLocation(),
               ),
             ),
@@ -465,10 +466,9 @@ class _SupportPageState extends State<SupportPage> {
     );
   }
 
-  // ✅ FIXED: URL spaces removed
   Future<void> _openWhatsApp() async {
     const phoneNumber = '918485854972';
-    final Uri whatsappUri = Uri.parse('https://wa.me/$phoneNumber'); // ✅ No space
+    final Uri whatsappUri = Uri.parse('https://wa.me/$phoneNumber'); // ✅ FIXED: no space
     try {
       if (await canLaunchUrl(whatsappUri)) {
         await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
@@ -495,7 +495,7 @@ class _SupportPageState extends State<SupportPage> {
   Future<void> _openLocation() async {
     final address = '03, Rajdhani Complex, near Shankar Maharaj Math, KK Market, Balaji Nagar, Pune, Maharashtra 411043';
     final encodedAddress = Uri.encodeComponent(address);
-    final Uri mapsUri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$encodedAddress'); // ✅ No space
+    final Uri mapsUri = Uri.parse('https://www.google.com/maps/search/?api=1&query=$encodedAddress'); // ✅ FIXED: no space
     try {
       if (await canLaunchUrl(mapsUri)) {
         await launchUrl(mapsUri, mode: LaunchMode.externalApplication);
@@ -546,31 +546,54 @@ class _SupportPageState extends State<SupportPage> {
   }
 
   Future<void> _sendEmail() async {
-    const email = 'suvrnaraj1299@gmail.com';
-    final Uri emailUri = Uri(
-      scheme: 'mailto',
-      path: email,
-      query: 'subject=Support%20Request',
-    );
+    const email = 'suvarnaraj1299@gmail.com';
+    const subject = 'Support Request';
+    const body = 'Hello, I need help with...\r\n\r\nPlease describe your issue here.'; // ✅ \r\n instead of \n
+
     try {
-      if (await canLaunchUrl(emailUri)) {
-        await launchUrl(emailUri);
+      if (GetPlatform.isWeb) {
+        // Web: Gmail web compose URL (NO encoding needed)
+        final webUrl = Uri.https('mail.google.com', '/mail/', {
+          'view': 'cm',
+          'fs': '1',
+          'to': email,
+          'su': subject,
+          'body': body,
+        });
+        if (await canLaunchUrl(webUrl)) {
+          await launchUrl(webUrl);
+        } else {
+          await Clipboard.setData(ClipboardData(text: email));
+          Get.snackbar(
+            'Email Copied',
+            'Paste this email in your email app: $email',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
       } else {
-        Get.snackbar(
-          'Error',
-          'Cannot open email app',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Theme.of(context).colorScheme.error,
-          colorText: Theme.of(context).colorScheme.onError,
-        );
+        // Mobile: Construct mailto URI manually
+        final encodedSubject = Uri.encodeComponent(subject);
+        final encodedBody = Uri.encodeComponent(body);
+        final mailtoUrl = 'mailto:$email?subject=$encodedSubject&body=$encodedBody';
+        final mobileUri = Uri.parse(mailtoUrl);
+
+        if (await canLaunchUrl(mobileUri)) {
+          await launchUrl(mobileUri);
+        } else {
+          await Clipboard.setData(ClipboardData(text: email));
+          Get.snackbar(
+            'Email Copied',
+            'Open your email app and send a message to: $email',
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
       }
     } catch (e) {
+      await Clipboard.setData(ClipboardData(text: email));
       Get.snackbar(
         'Error',
-        'Failed to send email: $e',
+        'Failed to open email. Address copied: $email',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Theme.of(context).colorScheme.error,
-        colorText: Theme.of(context).colorScheme.onError,
       );
     }
   }
